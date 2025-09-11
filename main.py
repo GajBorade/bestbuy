@@ -1,5 +1,6 @@
 import products
 import store
+import sys
 
 # setup initial stock of inventory
 product_list = [
@@ -7,7 +8,7 @@ product_list = [
     products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
     products.Product("Google Pixel 7", price=500, quantity=250),
 ]
-best_buy = store.Store(product_list)
+store_instance = store.Store(product_list)
 
 
 def start(best_buy):
@@ -54,7 +55,7 @@ def start(best_buy):
 
                 elif user_choice == 4:
                     print("Thank you for visiting best buy, See you again. Bye!")
-                    exit()
+                    sys.exit()
             else:
                 print(
                     "Invalid entry! User action should be an integer between 1 and 4."
@@ -115,4 +116,4 @@ def take_order(best_buy, products_list):
 
 
 if __name__ == "__main__":
-    start(best_buy)
+    start(store_instance)
