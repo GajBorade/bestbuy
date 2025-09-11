@@ -5,14 +5,14 @@ class Product:
         """Initialize product with name, price, quantity, and active status."""
         if not isinstance(name, str):
             raise TypeError("Name should be of type string")
-        elif not name.strip():
+        if not name.strip():
             raise ValueError("Name can not be empty, enter a name of the product")
         self.name = name.strip()
 
 
         if not isinstance(price, (float, int)):
             raise TypeError("Price should be of type float or int.")
-        elif price < 0:
+        if price < 0:
             raise ValueError(
                 "Price can not be less than zero. Enter valid price e.g., 1450 or 1399.99"
             )
@@ -21,7 +21,7 @@ class Product:
 
         if not isinstance(quantity, int):
             raise TypeError("Quantity should be of type int.")
-        elif quantity < 0:
+        if quantity < 0:
             raise ValueError(
                 "Quantity can not be less than zero. Enter valid quantity e.g., positive integers"
             )
