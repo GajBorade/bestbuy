@@ -64,7 +64,7 @@ class Product:
 
     def show(self):
         """Print product details."""
-        print(f"{self.name}, Price:{self.price}, Quantity:{self.quantity}")
+        print(f"{self.name}, Price: ${self.price:.2f}, Quantity: {self.quantity}")
 
 
     def buy(self, quantity):
@@ -74,5 +74,7 @@ class Product:
                 f"This quantity can not be delivered. Best buy has only {self.quantity}"
             )
         total_price = self.price * quantity
-        self.quantity = self.quantity - quantity
+        # Update quantity using set_quantity to handle automatic deactivation
+        new_quantity = self.quantity - quantity
+        self.set_quantity(new_quantity)
         return total_price
