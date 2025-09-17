@@ -1,14 +1,26 @@
+import sys
 import products
 import store
-import sys
 
-# setup initial stock of inventory
-product_list = [
-    products.Product("MacBook Air M2", price=1450, quantity=100),
-    products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-    products.Product("Google Pixel 7", price=500, quantity=250),
-]
-store_instance = store.Store(product_list)
+
+def main():
+    """
+    Setup initial stock of inventory for the Best Buy store and start
+    the application.
+
+    This section creates Product instances for the store and adds them
+    to the store's inventory. Each product has a name, price, and quantity.
+
+    After setting up the inventory, the start() function is called
+    to begin the interactive store menu for the user.
+    """
+    product_list = [
+        products.Product("MacBook Air M2", price=1450, quantity=100),
+        products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
+        products.Product("Google Pixel 7", price=500, quantity=250),
+    ]
+    store_instance = store.Store(product_list)
+    start(store_instance)
 
 
 def start(best_buy):
@@ -39,9 +51,9 @@ def start(best_buy):
             user_choice = int(user_action)
             if 1 <= user_choice <= 4:
                 if user_choice == 1:
-                    products = best_buy.get_all_products()
+                    all_products = best_buy.get_all_products()
                     print("------")
-                    for index, product in enumerate(products, start=1):
+                    for index, product in enumerate(all_products, start=1):
                         print(f"{index}. ", end="")
                         product.show()
                     print("------")
@@ -70,8 +82,10 @@ def take_order(best_buy, products_list):
     Handles the user order process:
     - Shows products with numbering
     - Lets user select product numbers and quantity
-    - Checks stock availability
+    - Checks stock availability and deactivated status
+    - Updates quantities immediately
     - Prints running total after each selection
+    - Prints final total once at the end before returning to menu
     """
     print("------")
     for index, product in enumerate(products_list, start=1):
@@ -80,7 +94,7 @@ def take_order(best_buy, products_list):
     print("------")
     print("When you want to finish order, enter empty text.")
 
-    shopping_list = []
+    running_total = 0
 
     while True:
         user_interaction = input("\nWhich product # do you want?").strip()
@@ -92,15 +106,20 @@ def take_order(best_buy, products_list):
             if 1 <= user_choice_number <= len(products_list):
                 product_selected = products_list[user_choice_number - 1]
 
+                if not product_selected.is_active():
+                    print("Sorry, this product is deactivated and cannot be purchased.")
+                    continue
+
                 units_input = int(input("How many units do you want?").strip())
                 if 0 < units_input <= product_selected.get_quantity():
-                    shopping_list.append((product_selected, units_input))
-                    total_price = best_buy.order(shopping_list)
-                    print(f"\nRunning total: ${total_price}")
+                    # Buy immediately and update product quantity
+                    total_price_for_units = product_selected.buy(units_input)
+                    running_total += total_price_for_units
+                    print(f"Running total: ${running_total:.2f}")
                 else:
                     print(
-                        "Sorry, out of stock, try again in the next days."
-                        "\nMeanwhile check out the other available products"
+                        "Sorry, not enough stock for this quantity.\n"
+                        "Please choose a lower quantity or another product."
                     )
             else:
                 print("Invalid product number, try again.")
@@ -108,12 +127,8 @@ def take_order(best_buy, products_list):
         except ValueError:
             print("Invalid input, please enter a valid number.")
 
-    if shopping_list:
-        final_total = best_buy.order(shopping_list)
-        print(f"\nOrder completed! Total payment: ${final_total}")
-    else:
-        print("No products were selected.")
+    print(f"\nOrder completed! Total payment: ${running_total:.2f}")
 
 
 if __name__ == "__main__":
-    start(store_instance)
+    main()
